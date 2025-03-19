@@ -8,12 +8,12 @@ import (
 		"log"
 )
 
-func retrieveMessages(channelID string) string{
+func retrieveMessages(channelID string, authToken string) string{
         url := "https://discord.com/api/v9/channels/" + channelID + "/messages"
         req, err := http.NewRequest("GET", url, nil)
 		errc(err)
 
-        req.Header.Set("Authorization", "MzQ1NjM2ODMzODg0ODk3Mjkx.GM5UM9.hzvSLNncqaX19i_wo1kKxeB60PSxKOc4jfyLwI")
+        req.Header.Set("Authorization", authToken)
 
         resp, err := http.DefaultClient.Do(req)
 		errc(err)
@@ -38,7 +38,8 @@ func retrieveMessages(channelID string) string{
 }
 
 func main() {
-        retrieveMessages("488929085381410816")
+		//Missing code to receive auth token
+        retrieveMessages("488929085381410816","")
 }
 func errc(err error) {
 	if err != nil {
