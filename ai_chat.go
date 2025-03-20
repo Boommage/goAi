@@ -57,20 +57,19 @@ func run(){
 		if(prompt == "exit"){
 			break
 		}
-
+		fmt.Println("\n")
 		//Initializes the Ai's response
 		_, err := chains.Run(ctx, 
 			llmChain, 
 			prompt,
 			//Prints message in real time.
 			chains.WithStreamingFunc(func(ctx context.Context, chunk []byte) error {
+				//Instead of printing, this needs to go to the chat box
 				fmt.Print(string(chunk))
 				return nil
 			}),
 		)
 		errc(err)
-
-		//fmt.Println("\n"+response)
 	}
 }
 

@@ -38,8 +38,15 @@ func retrieveMessages(channelID string, authToken string) string{
 }
 
 func main() {
-		//Missing code to receive auth token
-        retrieveMessages("488929085381410816","")
+		//Missing code to receive auth token - THE AUTH TOKEN CAN NOT BE PUBLIC
+        retrieveMessages("488909657482592257","")
+		
+		//488929085381410816 - Gage
+		//488909657482592257 - Mordred
+		//488905706804740126 - Sean
+		//
+
+		
 }
 func errc(err error) {
 	if err != nil {
