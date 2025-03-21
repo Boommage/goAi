@@ -49,8 +49,8 @@ func run(){
 	ctx := context.Background()
 
 	//Loops user input until "exit" is typed
-	for true {
-		fmt.Print("\nAI waiting for input: ")
+	for {
+		fmt.Print("\n\nAI waiting for input: ")
 
 		prompt, _ := reader.ReadString('\n')
 		prompt = strings.TrimSpace(prompt)
@@ -70,6 +70,7 @@ func run(){
 			}),
 		)
 		errc(err)
+		fmt.Println("\n")
 	}
 }
 
