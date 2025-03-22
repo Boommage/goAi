@@ -7,9 +7,9 @@ import (
 	"strings"
 )
 
-func sendMessage(channelID string, authToken string) {
+func sendMessage(channelID string, authToken string, chunk string) {
     payload := map[string]string{
-        "content": "TEST2",
+        "content": chunk,
     }
 
     url := "https://discord.com/api/v9/channels/"+ channelID +"/messages"
