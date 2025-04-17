@@ -1,2 +1,5 @@
-# Discord Ai messenger(WIP)
-The goal of this program is to read from a discord message and respond accordingly. The user should be able to adjust the Ai's behavior patterns through simple cli menus. The user should be able to utilize two ai models, llama3 and Deepseek. 
+# Auto-DM AI
+A chat bot that reads discord messages and responds to them on my behalf. 
+
+The user should be able to adjust the Ai's behavior patterns through simple cli menus. llama3 and Deepseek. 
+Powered by llama3 and (soon)Deepseek-L1
