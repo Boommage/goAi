@@ -1,15 +1,21 @@
 package main
 
-import(
+import (
 	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
-//Missing code to receive auth token - THE AUTH TOKEN CAN NOT BE PUBLIC
-var authToken string = ""
+//load env
+var err = godotenv.Load()
+//Missing code to receive auth token for every user 
+var authToken string = os.Getenv("AUTHTOKEN")
+
 //The person sending the dm
 //var sender string = ""
 func main() {
-		//Calls the message reader when a notification is received 
 		//testAI()
+		//Calls the message reader when a notification is received 
 		clock()
 }
 //error catcher (For redundancy)

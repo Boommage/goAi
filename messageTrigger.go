@@ -9,17 +9,17 @@ import (
 	"strings"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
+	//"github.com/mattn/go-sqlite3"
 )
 
 const (
-	//All windows notifications are sent to a database file.
+	//All windows notifications are sent to a database file
 	//This is the files location 
 	// - NOTE: make this generic
-	dbPath   = "C:/Users/djgam/AppData/Local/Microsoft/Windows/Notifications/wpndatabase.db"
+	dbPath   = "C:/Users/DJ/AppData/Local/Microsoft/Windows/Notifications/wpndatabase.db"
 	//Reads from db file every second
 	interval = 1 * time.Second
-	//10 second cooldown from reading the db file.	
+	//10 second cooldown from reading the db file
 	cooldown = 10 * time.Second
 )
 
@@ -55,7 +55,7 @@ type TextElement struct {
 	Text string `xml:",chardata"`
 }
 
-//Reads from the db file on an interval.
+//Reads from the db file on an interval
 func clock() {
 	for {
 		var x int = 0
