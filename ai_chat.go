@@ -23,12 +23,16 @@ import (
 This is a work in progress project i'm working on.
 The goal is for Deepseek and/or llama3 to read a user's messages and respond to them accordingly
 The following features have been implemented:
-	1. llama3 speaks and user can chat with them
-	2. llama3 remembers previous messages
-	3. User can exit the chat
+	1. AI responds to set discord members dms
+	2. AI remembers previous messages based on discord user name.
+	3. AI will refer to saved discord friends as a set user name. 
 */
 func runAI(prompt string){
+	if userNames[sender] != "" {
+			sender = userNames[sender]
+	}
 	print(sender)
+	
 	//Initialize the program with the ai model
 	llm, err := ollama.New(ollama.WithModel("llama3"))
 	errc(err)

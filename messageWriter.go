@@ -11,7 +11,7 @@ func sendMessage(channelID string, authToken string, chunk string) {
     payload := map[string]string{
         "content": chunk,
     }
-
+    print(channelID," - channel id\n")
     url := "https://discord.com/api/v9/channels/"+ channelID +"/messages"
 
     client := &http.Client{}

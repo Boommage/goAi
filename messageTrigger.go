@@ -1,119 +1,53 @@
-// Triggers when the user receives a dm.
 package main
 
 import (
 	"database/sql"
-	"encoding/xml"
 	"fmt"
-	"log"
-	"strings"
+	_"github.com/mattn/go-sqlite3"
 	"time"
-
-	//"github.com/mattn/go-sqlite3"
 )
 
-const (
-	//All windows notifications are sent to a database file
-	//This is the files location 
-	// - NOTE: make this generic
-	dbPath   = "C:/Users/DJ/AppData/Local/Microsoft/Windows/Notifications/wpndatabase.db"
-	//Reads from db file every second
-	interval = 1 * time.Second
-	//10 second cooldown from reading the db file
-	cooldown = 10 * time.Second
-)
+var sender string;
 
-var sender string
-var senderText string
-//Every notif db file has a "payload"
-/*
----Payload data format---
-
-//<toast>
-// 	<visual>
-// 		<binding template="ToastImageAndText02">
-// 			<image id="1" src="C:\Users\username\AppData\Local\Temp\scoped_dir\sender.png"/>
-// 			<text id="1">sender_name</text>
-// 			<text id="2">sender_text</text>
-// 		</binding>
-// 	</visual>
-// 	<audio silent="true"/>
-//</toast>
-*/
-type PayloadData struct {
-	XMLName xml.Name `xml:"toast"`
-	Visual  struct {
-		Version string `xml:"version,attr"`
-		Binding struct {
-			Text []TextElement `xml:"text"`
-		} `xml:"binding"`
-	} `xml:"visual"`
-}
-//The most important part of the payload, the sender name and sender text
-type TextElement struct {
-	ID   string `xml:"id,attr"`
-	Text string `xml:",chardata"`
-}
-
-//Reads from the db file on an interval
 func clock() {
-	for {
-		var x int = 0
-		for x < 100{
-			senderTemp, senderTextTemp := processDatabase(dbPath)
-			//If the message text and sender are the same then don't recall	
-			if(senderTemp != sender && senderTextTemp != senderText){
-				sender = strings.ToLower(senderTemp)
-				senderText = senderTextTemp
-				retrieveMessage(sender,senderText)
-			}
-			time.Sleep(interval)
-			x++
-		}
-		time.Sleep(cooldown)
-	}
-}
-//Extracts data from db file
-func processDatabase(dbFile string) (sender string, senderText string){
-	db, err := sql.Open("sqlite3", dbFile)
+	db, err := sql.Open("sqlite3", "./messages.db")
 	if err != nil {
-		log.Printf("Error opening database: %v", err)
-		return
+		panic(err)
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT Payload FROM Notification") // Replace with your actual table name
-	if err != nil {
-		log.Printf("Error querying database: %v", err)
-		return
-	}
-	defer rows.Close()
-
-	var toastPayload string
-	for rows.Next() {
-		var payload string
-		if err := rows.Scan(&payload); err != nil {
-			log.Printf("Error scanning row: %v", err)
-			continue
+	// Loop forever, checking for new messages
+	for {
+		rows, err := db.Query("SELECT id, username, message FROM messages WHERE processed = 0")
+		if err != nil {
+			panic(err)
 		}
-		if strings.HasPrefix(strings.TrimSpace(payload), "<toast>") {
-			toastPayload = payload
-			break // Stop at the first <toast> entry found
+		_, err = db.Exec("PRAGMA journal_mode=WAL;")
+		if err != nil {
+    		panic(err)
 		}
-	}
 
-	if toastPayload == "" {
-		log.Println("No <toast> entry found.")
-		return
-	}
+		var id int
+		var username, message string
 
-	var parsedToast PayloadData
-	if err := xml.Unmarshal([]byte(toastPayload), &parsedToast); err != nil {
-		log.Printf("Error parsing XML: %v", err)
-		return
-	}
+		for rows.Next() {
+			err = rows.Scan(&id, &username, &message)
+			if err != nil {
+				continue
+			}
 
-	fmt.Println("First <toast> entry found:")
-	fmt.Println(parsedToast.Visual.Binding.Text[0].Text +": "+parsedToast.Visual.Binding.Text[1].Text+"\n")
-	return parsedToast.Visual.Binding.Text[0].Text, parsedToast.Visual.Binding.Text[1].Text
+			// Process the message
+			//fmt.Printf("Go received: %s -> %s\n", username, message)
+			sender = username
+			retrieveMessage(username, message)
+			time.Sleep(1000)
+			_, err = db.Exec("DELETE FROM messages WHERE id = ?", id)
+			if err != nil {
+    		fmt.Println("Error deleting message:", err)
+			}
+		}
+		rows.Close()
+
+		time.Sleep(2 * time.Second)
+	}
 }
